@@ -2,7 +2,7 @@
 # gcp-ssh-key-adder.py
 # Adds ssh-keys to GCP the easy way
 # 2018, Sebastian Weigand || tdg@google.com
-# Version 1.0
+# Version 1.0.1
 
 import subprocess
 import yaml
@@ -76,7 +76,7 @@ def eprint(*text):
 
 # Path cleaning for multiple SSH keys:
 ssh_key_file_paths = [
-    os.path.expanduser(os.path.realpath(path)) for path in args.ssh_key_files
+    os.path.realpath(os.path.expanduser(path)) for path in args.ssh_key_files
 ]
 
 # Path sanity:
@@ -167,8 +167,9 @@ update_command = subprocess.run(
     ],
     stdout=subprocess.PIPE)
 
-if metadata_command.returncode != 0:
-    exit('gcloud command invocation error')
-
 os.remove(tempfile_path)
 logger.debug('Removed temporary file.')
+
+if update_command.returncode != 0:
+    exit('gcloud command invocation error')
+
